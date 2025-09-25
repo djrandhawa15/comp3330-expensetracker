@@ -1,7 +1,8 @@
-# Lab 3 – Notes
+# Lab 4 – Notes
 
-- **PUT vs PATCH:** I learned that `PUT` is meant for replacing the entire resource, while `PATCH` is for updating only the fields provided. Using both helps clarify intent and enforces proper API design.  
-- **Error Handling:** Standardizing errors with a common `{ "error": { "message": "..." } }` format makes debugging and client handling much easier. It also forces consistency across all endpoints.  
-- **Validation:** Using Zod schemas for both creation and updates prevents invalid or empty requests from being processed (e.g., rejecting an empty PATCH body). This keeps data integrity strong.  
-- **Response Helpers:** Abstracting success (`ok`) and error (`err`) responses into reusable helpers simplified code and ensured consistent shapes and status codes (200, 201, 400, 404).  
-- **Learning:** I now better understand how small improvements in response design and validation lead to more reliable APIs, which is crucial for real-world full-stack applications.  
+- **Database Integration:** Replaced the in-memory array with a Neon Postgres database using Drizzle ORM. All CRUD routes now run queries against the database instead of local memory.  
+- **Schema & Migrations:** Defined a Drizzle schema (`expenses` table with id, title, amount) and used `drizzle-kit` to generate/push migrations, which created the table on Neon.  
+- **Environment Setup:** Added `.env` with `DATABASE_URL` and configured `drizzle.config.ts`. The connection required `?sslmode=require` to avoid TLS errors.  
+- **Routes Rewrite:** Updated `server/routes/expenses.ts` to use `db.select`, `db.insert`, `db.update`, and `db.delete` with `.returning()`. This made the API persistent across restarts.  
+- **Validation & Consistency:** Kept Zod validation from Lab 3 for POST/PUT/PATCH. Empty PATCH bodies are rejected, and responses remain consistent with `{ data }` / `{ error }` helpers.  
+- **Learning:** I learned how to connect a backend API to a real database, manage migrations, and handle subtle connection gotchas—essential skills for production-ready applications.  
