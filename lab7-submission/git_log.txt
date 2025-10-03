@@ -1,4 +1,6 @@
-05e7412 (HEAD -> lab3, origin/lab3) lab 5 updated
+PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> git log --oneline
+2660cb9 (HEAD -> lab3, origin/lab3) lab6 added
+05e7412 lab 5 updated
 e26f825 lab 5
 4fa00a0 lab4
 6efaf08 notes.md is added
@@ -8,4 +10,4 @@ b88797c updated for lab2
 6ea6f96 lab2
 4c2475d (origin/main, main) lab 1 submission
 f13c0d9 lab1: bun + hono minimal server with routes
-PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> 
+:
