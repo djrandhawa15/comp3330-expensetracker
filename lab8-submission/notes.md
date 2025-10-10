@@ -1,7 +1,15 @@
-# Lab 7 – Notes  
+# Lab 8 – Notes  
 
-- **QueryClient Setup:** Wrapped the app in `QueryClientProvider` so TanStack Query manages server state globally.  
-- **useQuery:** Replaced manual fetch with `useQuery`, which handles loading and error states automatically.  
-- **useMutation:** Added `useMutation` for creating expenses; used `invalidateQueries` to refresh the list after add.  
-- **Caching & Invalidation:** Learned that queries are cached by key and only re-fetched when invalidated.  
-- **Learning:** TanStack Query removes the need for manual refresh patterns and gives built-in caching, retries, and error handling.  
+- **TanStack Router Setup:** Installed and configured `@tanstack/react-router` to manage navigation in the Expenses app. Replaced single-page rendering with multi-page routing.  
+
+- **Root & Nested Routes:** Created a root layout in `router.tsx` and defined nested routes for `/`, `/expenses`, `/expenses/:id`, and `/expenses/new`. Learned that child paths omit the leading slash and use `<Outlet />` for nested views.  
+
+- **Shared Layout & Navbar:** Updated `App.tsx` to include a common header with `<Link>` navigation to Home, List, and New pages, providing consistent UI across routes.  
+
+- **Dynamic Routing:** Used route parameters like `$id` to display specific expense details with `useQuery` fetching data from `/api/expenses/:id`.  
+
+- **Integration with TanStack Query:** Combined routing and query management—each page (list, detail, new) interacts with the same API using caching and invalidation.  
+
+- **Error and NotFound Boundaries:** Configured global defaults for unknown routes and runtime errors using `defaultNotFoundComponent` and `defaultErrorComponent`.  
+
+- **Learning:** File-based routing keeps code organized, reduces prop-drilling for navigation, and makes multi-page apps feel seamless while maintaining SPA performance.  
