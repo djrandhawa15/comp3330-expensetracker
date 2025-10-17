@@ -6,47 +6,53 @@ import {
   createRootRoute,
   createRoute,
 } from '@tanstack/react-router'
+
 import App from './App'
 import ExpensesListPage from './routes/expenses.list'
 import ExpenseDetailPage from './routes/expenses.detail'
+import ExpenseNewPage from './routes/expenses.new' // ⬅ add this
 
+// Root layout -> renders <App /> which contains <Outlet />
 const rootRoute = createRootRoute({
   component: () => <App />,
   notFoundComponent: () => <p>Page not found</p>,
   errorComponent: ({ error }) => <p>Error: {(error as Error).message}</p>,
 })
 
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: () => <p>Home Page</p>,
-})
-
+// /expenses parent
 const expensesRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/expenses',
-  component: () => <div className="space-y-4"><h1 className="text-2xl font-bold">Expenses</h1><Outlet /></div>,
-}).update({
-  // need to import Outlet after the route is created
+  path: 'expenses',
 })
-// ts helper to attach Outlet (avoids circular import warnings)
-const { Outlet } = await import('@tanstack/react-router')
 
+// /expenses (index)
 const expensesIndexRoute = createRoute({
   getParentRoute: () => expensesRoute,
-  path: '/',
-  component: () => <ExpensesListPage />,
+  path: '/', // index child
+  component: ExpensesListPage,
 })
 
+// /expenses/new  ✅ static route takes precedence over $id
+const expensesNewRoute = createRoute({
+  getParentRoute: () => expensesRoute,
+  path: 'new',
+  component: ExpenseNewPage,
+})
+
+// /expenses/$id  (detail)
 const expensesDetailRoute = createRoute({
   getParentRoute: () => expensesRoute,
-  path: '$id', // matches /expenses/123
-  component: () => <ExpenseDetailPage />,
+  path: '$id',
+  component: ExpenseDetailPage,
 })
 
+// Build the tree
 const routeTree = rootRoute.addChildren([
-  indexRoute,
-  expensesRoute.addChildren([expensesIndexRoute, expensesDetailRoute]),
+  expensesRoute.addChildren([
+    expensesIndexRoute,
+    expensesNewRoute,     // make sure this is present
+    expensesDetailRoute,
+  ]),
 ])
 
 const router = createRouter({ routeTree })

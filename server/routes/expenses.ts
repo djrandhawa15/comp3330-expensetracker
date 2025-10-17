@@ -17,7 +17,7 @@ const expenseSchema = z.object({
   id: z.number().int().positive(),
   title: z.string().min(3).max(100),
   amount: z.number().int().positive(),
-  fileUrl: z.string().nullable().optional(), // returned value can be signed URL
+  fileUrl: z.string().nullable().optional(),
 })
 
 const createExpenseSchema = expenseSchema.omit({ id: true, fileUrl: true })
@@ -25,8 +25,8 @@ const createExpenseSchema = expenseSchema.omit({ id: true, fileUrl: true })
 const updateExpenseSchema = z.object({
   title: z.string().min(3).max(100).optional(),
   amount: z.number().int().positive().optional(),
-  fileUrl: z.string().min(1).nullable().optional(), // direct null/reset if needed
-  fileKey: z.string().min(1).optional(),            // S3 key to store in fileUrl column
+  fileUrl: z.string().min(1).nullable().optional(),
+  fileKey: z.string().min(1).optional(),
 })
 
 // ---------- Helpers ----------
@@ -58,7 +58,7 @@ const withSignedDownloadUrl = async (row: ExpenseRow): Promise<ExpenseRow> => {
         Bucket: process.env.S3_BUCKET!,
         Key: row.fileUrl,
       }),
-      { expiresIn: 3600 } // 1 hour
+      { expiresIn: 3600 }
     )
     return { ...row, fileUrl: signed }
   } catch (e) {
@@ -70,7 +70,7 @@ const withSignedDownloadUrl = async (row: ExpenseRow): Promise<ExpenseRow> => {
 // ---------- Routes ----------
 export const expensesRoute = new Hono<AppBindings>()
 
-// protect everything in this router
+// Protect everything in this router
 expensesRoute.use('*', async (c, next) => {
   const err = await requireAuth(c)
   if (err) return err
@@ -101,7 +101,7 @@ expensesRoute.post('/', zValidator('json', createExpenseSchema), async (c) => {
   return c.json({ expense: withUrl }, 201)
 })
 
-// PUT full update (uses update schema!)
+// PUT full update (uses update schema as a convenience)
 expensesRoute.put('/:id{\\d+}', zValidator('json', updateExpenseSchema), async (c) => {
   const id = Number(c.req.param('id'))
   const data = buildUpdatePayload(c.req.valid('json'))
@@ -123,10 +123,13 @@ expensesRoute.patch('/:id{\\d+}', zValidator('json', updateExpenseSchema), async
   return c.json({ expense: withUrl })
 })
 
-// DELETE
+// DELETE (single, non-duplicated)
 expensesRoute.delete('/:id{\\d+}', async (c) => {
   const id = Number(c.req.param('id'))
+  if (!Number.isFinite(id)) return c.json({ error: 'Invalid ID' }, 400)
+
   const [deletedRow] = await db.delete(expenses).where(eq(expenses.id, id)).returning()
   if (!deletedRow) return c.json({ error: 'Not found' }, 404)
-  return c.json({ deleted: deletedRow })
+
+  return c.json({ success: true })
 })

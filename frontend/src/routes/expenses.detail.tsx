@@ -13,10 +13,15 @@ type Expense = {
 }
 
 export default function ExpenseDetailPage() {
-  const { id } = useParams({ from: '/expenses/$id' }) as { id: string }
+  const { id } = useParams({ from: '/expenses/$id' }) as { id?: string }
   const expenseId = Number(id)
-  const qc = useQueryClient()
 
+  // Guard: if id missing or NaN, render nothing (prevents /api/expenses/NaN)
+  if (!id || Number.isNaN(expenseId)) {
+    return <p className="text-sm text-gray-500">No expense selected.</p>
+  }
+
+  const qc = useQueryClient()
   const { data, isLoading, error } = useQuery({
     queryKey: ['expense', expenseId],
     queryFn: async () => {
@@ -26,24 +31,19 @@ export default function ExpenseDetailPage() {
   })
 
   if (isLoading) return <p>Loading…</p>
-  if (error || !data) return <p className="text-red-600">Failed: {(error as Error).message}</p>
-
-  const expense = data
+  if (error) return <p className="text-red-600">Error: {(error as Error).message}</p>
+  const expense = data!
 
   return (
-    <section className="space-y-4">
-      <h2 className="text-xl font-semibold">Expense #{expense.id}</h2>
-      <div className="space-y-1">
-        <p><span className="font-medium">Title:</span> {expense.title}</p>
-        <p><span className="font-medium">Amount:</span> ${expense.amount}</p>
-      </div>
+    <section className="mx-auto max-w-3xl p-6">
+      <h2 className="text-xl font-semibold">{expense.title}</h2>
+      <p className="text-gray-600 mt-1">${expense.amount}</p>
 
-      <UploadExpenseForm
-        expenseId={expense.id}
-        onDone={() => qc.invalidateQueries({ queryKey: ['expense', expense.id] })}
-      />
-
-      <div>
+      <div className="mt-4">
+        <UploadExpenseForm
+          expenseId={expense.id}
+          onDone={() => qc.invalidateQueries({ queryKey: ['expense', expense.id] })}
+        />
         {expense.fileUrl ? (
           <a
             href={expense.fileUrl}
