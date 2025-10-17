@@ -1,6 +1,9 @@
-dilra@DJs_Strix MINGW64 ~/Desktop/School Work/Full Stack Stuff/Javascript Frameworks/comp3330-expensetracker (lab3)
-$ git log --oneline
-e5d5ee2 (HEAD -> lab3, origin/lab3) lab 9
+PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> git log --oneline
+ecb8ce5 (HEAD -> main, origin/main) lab 10
+60788b1 Merge pull request #2 from djrandhawa15/lab3
+57760d0 (origin/lab3, lab3) lab 9 updated
+e5d5ee2 lab 9
+deb099f Merge pull request #1 from djrandhawa15/lab3
 27bfb99 lab 8 updated
 c668b8e lab 8
 f348d92 lab 7
@@ -13,5 +16,6 @@ e26f825 lab 5
 b8af3f2 (origin/Lab2, Lab2) reorganized files for submission
 b88797c updated for lab2
 6ea6f96 lab2
-4c2475d (main) lab 1 submission
+4c2475d lab 1 submission
 f13c0d9 lab1: bun + hono minimal server with routes
+PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> 

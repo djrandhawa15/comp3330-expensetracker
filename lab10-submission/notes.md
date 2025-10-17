@@ -1,13 +1,16 @@
-# Lab 10 – Notes  
+# Lab 10 – Notes
 
-- **S3 Setup and Configuration:** Created a private S3-compatible bucket with a CORS policy that allows uploads only from `http://localhost:5173`. Configured environment variables with region, endpoint, bucket name, and IAM credentials for secure backend access.  
+- **Provider & Setup:** Used AWS S3 (us-east-2) as the storage provider. Configured private bucket `dilraj-expenses-receipts` with a CORS policy allowing `http://localhost:5173` for PUT/GET/HEAD.
 
-- **Presigned URL Generation:** Built a backend route `/api/upload/sign` using AWS SDK and `getSignedUrl()` to generate time-limited upload URLs. This lets the browser upload directly to S3 while keeping credentials safe on the server.  
+- **Presigned URLs:** Backend route `/api/upload/sign` (Hono + AWS SDK v3) generates time-limited presigned URLs. Browser uploads directly to S3 using `PUT` with matching `Content-Type`.
 
-- **Database Integration:** Updated the `expenses` table schema to include a `fileUrl` column for storing uploaded file keys. Drizzle migrations (`bun run db:generate` and `bun run db:push`) applied these changes successfully.  
+- **Database & API:** Added a `file_url` column to the `expenses` table. The backend stores only the S3 key, not a public URL. On every read, it returns a signed download URL (1-hour expiry).
 
-- **Secure File Access:** Implemented automatic signed download URLs for each expense so receipts remain private. When data is fetched, the backend attaches a fresh one-hour signed link for every file.  
+- **Frontend Workflow:** The upload form calls `/api/upload/sign`, uploads to S3, then updates `/api/expenses/:id` with `{ fileKey }`. The detail page automatically refreshes and shows a **Download Receipt** link.
 
-- **Frontend Upload Flow:** Added a file upload form that (1) requests a signed URL, (2) uploads the file to S3, and (3) updates the expense with the new key. Displayed “Download Receipt” links dynamically using React Query refetching.  
+- **Challenges:**  
+  - Fixed **CORS preflight** by using the correct region (`us-east-2`) and matching headers.  
+  - Ensured **same-origin cookies** by using the Vite proxy (`/api`).  
+  - Adjusted file naming to avoid spaces and signature mismatches.
 
-- **Learning:** Gained hands-on experience with presigned URLs, private S3 buckets, and full-stack file upload security. Learned how to isolate uploads to the browser while the backend controls signing and ensures authenticated access.  
+- **Takeaways:** Learned secure file uploads using presigned URLs—keeping credentials off the client while keeping the bucket private. Also reinforced understanding of CORS, regions, and signed URL lifetimes.
