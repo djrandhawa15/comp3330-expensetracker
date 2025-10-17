@@ -1,15 +1,14 @@
-// src/router.tsx
+// frontend/src/router.tsx
+import * as React from 'react'
 import {
   RouterProvider,
   createRouter,
   createRootRoute,
   createRoute,
-  Outlet,
 } from '@tanstack/react-router'
 import App from './App'
 import ExpensesListPage from './routes/expenses.list'
-import ExpenseNewPage from './routes/expenses.new'
-import ExpenseDetailPage from './routes/expenses.detail' // 👈
+import ExpenseDetailPage from './routes/expenses.detail'
 
 const rootRoute = createRootRoute({
   component: () => <App />,
@@ -23,54 +22,41 @@ const indexRoute = createRoute({
   component: () => <p>Home Page</p>,
 })
 
-const ExpensesLayout = () => (
-  <section className="p-4">
-    <h2 className="text-xl font-semibold mb-4">Expenses</h2>
-    <Outlet />
-  </section>
-)
-
 const expensesRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'expenses', // no leading slash
-  component: ExpensesLayout,
+  path: '/expenses',
+  component: () => <div className="space-y-4"><h1 className="text-2xl font-bold">Expenses</h1><Outlet /></div>,
+}).update({
+  // need to import Outlet after the route is created
 })
+// ts helper to attach Outlet (avoids circular import warnings)
+const { Outlet } = await import('@tanstack/react-router')
 
 const expensesIndexRoute = createRoute({
   getParentRoute: () => expensesRoute,
   path: '/',
-  component: ExpensesListPage,
-})
-
-const expensesNewRoute = createRoute({
-  getParentRoute: () => expensesRoute,
-  path: 'new',
-  component: ExpenseNewPage,
+  component: () => <ExpensesListPage />,
 })
 
 const expensesDetailRoute = createRoute({
   getParentRoute: () => expensesRoute,
-  path: '$id', // /expenses/:id
-  component: ExpenseDetailPage,
+  path: '$id', // matches /expenses/123
+  component: () => <ExpenseDetailPage />,
 })
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  expensesRoute.addChildren([
-    expensesIndexRoute,
-    expensesNewRoute,
-    expensesDetailRoute, // 👈 include it
-  ]),
+  expensesRoute.addChildren([expensesIndexRoute, expensesDetailRoute]),
 ])
 
-export const router = createRouter({ routeTree })
-
-export function AppRouter() {
-  return <RouterProvider router={router} />
-}
+const router = createRouter({ routeTree })
 
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
   }
+}
+
+export function AppRouter() {
+  return <RouterProvider router={router} />
 }

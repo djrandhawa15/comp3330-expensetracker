@@ -1,100 +1,63 @@
-// /frontend/src/routes/expenses.list.tsx
+// frontend/src/routes/expenses.list.tsx
 import * as React from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api'
 
-export type Expense = { id: number; title: string; amount: number }
-type ExpensesResponse = { expenses: Expense[] }
-
-// use the proxy in dev; call /api directly in prod
-const API = import.meta.env.DEV ? '/api' : '/api'
+type Expense = {
+  id: number
+  title: string
+  amount: number
+  fileUrl?: string | null
+}
 
 export default function ExpensesListPage() {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    isFetching,
-  } = useQuery<ExpensesResponse>({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['expenses'],
     queryFn: async () => {
-      const res = await fetch(`${API}/expenses`)
-      if (!res.ok) {
-        const txt = await res.text().catch(() => '')
-        throw new Error(`HTTP ${res.status}: ${txt || res.statusText}`)
-      }
-      return res.json()
+      const json = await api<{ expenses: Expense[] }>('/api/expenses')
+      return json.expenses
     },
-    staleTime: 5_000,
-    retry: 1,
   })
 
-  if (isLoading) return <p className="p-6 text-sm text-muted-foreground">Loading…</p>
+  if (isLoading) return <p>Loading…</p>
+  if (error) return <p className="text-red-600">Failed: {(error as Error).message}</p>
 
-  if (isError)
-    return (
-      <div className="p-6">
-        <p className="text-sm text-red-600">
-          Failed to fetch: {(error as Error).message}
-        </p>
-        <button
-          className="mt-3 rounded border px-3 py-1"
-          onClick={() => refetch()}
-          disabled={isFetching}
-        >
-          Retry
-        </button>
-      </div>
-    )
-
-  const items = data?.expenses ?? []
+  const items = data || []
 
   return (
-    <section className="mx-auto max-w-3xl p-6">
-      <header className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Expenses</h2>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/expenses/new"
-            className="rounded border px-3 py-1 text-sm underline"
-          >
-            New
-          </Link>
-          <button
-            className="rounded border px-3 py-1 text-sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            {isFetching ? 'Refreshing…' : 'Refresh'}
-          </button>
-        </div>
-      </header>
-
+    <div className="space-y-3">
+      <h2 className="text-xl font-semibold">Expenses</h2>
       {items.length === 0 ? (
-        <div className="rounded border bg-background p-6">
-          <p className="text-sm text-muted-foreground">No expenses yet.</p>
-        </div>
+        <p className="text-gray-500">No expenses yet.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y">
           {items.map((e) => (
-            <li
-              key={e.id}
-              className="flex items-center justify-between rounded border bg-background text-foreground p-3 shadow-sm"
-            >
-              <Link
-                to="/expenses/$id"
-                params={{ id: String(e.id) }} // must be string
-                className="font-medium underline hover:text-primary"
-              >
-                {e.title}
-              </Link>
-              <span className="tabular-nums">#{e.amount}</span>
+            <li key={e.id} className="py-2 flex items-center justify-between">
+              <div>
+                <div className="font-medium">{e.title}</div>
+                <div className="text-sm text-gray-500">${e.amount}</div>
+              </div>
+              <div className="flex items-center gap-3">
+                {e.fileUrl ? (
+                  <a className="text-blue-600 underline" href={e.fileUrl} target="_blank" rel="noreferrer">
+                    Download
+                  </a>
+                ) : (
+                  <span className="text-gray-400 text-sm">No receipt</span>
+                )}
+                <Link
+                  to="/expenses/$id"
+                  params={{ id: String(e.id) }}
+                  className="rounded bg-black px-3 py-1 text-white"
+                >
+                  View
+                </Link>
+              </div>
             </li>
           ))}
         </ul>
       )}
-    </section>
+    </div>
   )
 }
