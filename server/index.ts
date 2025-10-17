@@ -1,4 +1,5 @@
 // server/index.ts
+import 'dotenv/config'         // ⬅ add this at the very top
 import { app } from './app'
 
 // Prefer PORT from env; default 3000
@@ -10,4 +11,3 @@ export default {
 }
 
 console.log(`🚀 Server running on http://localhost:${port}`)
-

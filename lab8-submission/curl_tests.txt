@@ -1,4 +1,0 @@
-PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> curl http://localhost:3000/api/expenses
-{"expenses":[{"id":2,"title":"Books","amount":50},{"id":3,"title":"cards","amount":122},{"id":4,"title":"pencils","amount":10},{"id":5,"title":"laptop","amount":1000},{"id":6,"title":"coffee","amount":1},{"id":7,"title":"coffee","amount":2}]}
-PS C:\Users\dilra\Desktop\School Work\Full Stack Stuff\Javascript Frameworks\comp3330-expensetracker> 
-

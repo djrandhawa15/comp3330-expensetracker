@@ -1,0 +1,9 @@
+dilra@DJs_Strix MINGW64 ~/Desktop/School Work/Full Stack Stuff/Javascript Frameworks/comp3330-expensetracker (lab3)
+$ curl -i http://localhost:3000/api/secure/profile
+HTTP/1.1 401 Unauthorized
+Vary: Origin
+Content-Type: application/json
+Date: Fri, 17 Oct 2025 02:51:11 GMT
+Content-Length: 24
+
+{"error":"Unauthorized"}
