@@ -1,5 +1,5 @@
 // frontend/src/routes/expenses.list.tsx
-import * as React from 'react'
+
 import { Link } from '@tanstack/react-router'
 import { AddExpenseForm } from '@/components/AddExpenseForm'
 import { ExpensesList } from '@/components/ExpensesList'

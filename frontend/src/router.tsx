@@ -1,5 +1,4 @@
 // frontend/src/router.tsx
-import * as React from 'react'
 import {
   RouterProvider,
   createRouter,

@@ -1,5 +1,5 @@
 // frontend/src/routes/expenses.detail.tsx
-import * as React from 'react'
+
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { api } from '@/lib/api'

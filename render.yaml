@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: expense-tracker
+    runtime: docker
+    plan: free
+    buildCommand: bun install && bun run build
+    startCommand: bun run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        sync: false
+      - key: KINDE_ISSUER_URL
+        sync: false
+      - key: KINDE_CLIENT_ID
+        sync: false
+      - key: KINDE_CLIENT_SECRET
+        sync: false
+      - key: KINDE_REDIRECT_URI
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://expense-tracker.onrender.com
